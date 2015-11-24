@@ -1,0 +1,18 @@
+apply plugin: 'idea'
+apply plugin: 'java'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    testCompile 'junit:junit:4.12'
+    compile 'org.apache.httpcomponents:httpclient:4.5.1'
+    compile 'com.fasterxml.jackson.core:jackson-annotations:2.6.3'
+    compile 'com.fasterxml.jackson.core:jackson-databind:2.6.3'
+    compile 'org.glassfish.web:javax.el:2.2.5'
+    compile 'javax.el:javax.el-api:2.2.5'
+    compile 'javax.validation:validation-api:1.1.0.Final'
+    compile 'org.hibernate:hibernate-validator:5.2.2.Final'
+    compile 'org.hibernate:hibernate-validator-annotation-processor:5.2.2.Final'
+}
