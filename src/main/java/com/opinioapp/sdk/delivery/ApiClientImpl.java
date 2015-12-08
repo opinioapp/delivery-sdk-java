@@ -88,31 +88,25 @@ public class ApiClientImpl implements ApiClient {
     }
 
     @Override
-    public Serviceability checkServiceability(int merchantId) throws PluginNotSetupException, IOException, ApiCallException {
+    public Serviceability checkServiceability(String merchantId) throws PluginNotSetupException, IOException, ApiCallException {
         if (!isInitialized) {
             throw new PluginNotSetupException();
         }
 
-        Map<String, Integer> qs = new HashMap<>();
+        Map<String, String> qs = new HashMap<>();
         qs.put("merchant_id", merchantId);
 
         BaseApiResponse response = makeCall(qs, HttpAgent.HTTPMethod.GET, "/api/v1/serviceability");
 
         if (!response.isOk()) {
-            ApiError apiError = JSON.parse(response.getJsonBody(), ApiError.class);
-
-            if (response.getStatusCode() == HttpStatus.SC_UNAUTHORIZED) {
-                throw new PluginNotSetupException("AccessKey and Secret not setup properly");
-            }
-
-            throw new ApiCallException(apiError);
+            onUnAuthorized(response);
         }
 
         return JSON.parse(response.getJsonBody(), Serviceability.class);
     }
 
     @Override
-    public SupportedLocalities getSupportedLocalities(int merchantId) throws PluginNotSetupException, IOException, ApiCallException {
+    public SupportedLocalities getSupportedLocalities(String merchantId) throws PluginNotSetupException, IOException, ApiCallException {
         if (!isInitialized) {
             throw new PluginNotSetupException();
         }
@@ -120,13 +114,7 @@ public class ApiClientImpl implements ApiClient {
         BaseApiResponse response = makeCall(new Object(), HttpAgent.HTTPMethod.GET, "/api/v1/localities/" + merchantId);
 
         if (!response.isOk()) {
-            ApiError apiError = JSON.parse(response.getJsonBody(), ApiError.class);
-
-            if (response.getStatusCode() == HttpStatus.SC_UNAUTHORIZED) {
-                throw new PluginNotSetupException("AccessKey and Secret not setup properly");
-            }
-
-            throw new ApiCallException(apiError);
+            onUnAuthorized(response);
         }
 
         return JSON.parse(response.getJsonBody(), SupportedLocalities.class);
@@ -183,13 +171,7 @@ public class ApiClientImpl implements ApiClient {
                 "/api/v1/orders/" + updatedDeliveryRequest.getOrderCode());
 
         if (!response.isOk()) {
-            ApiError apiError = JSON.parse(response.getJsonBody(), ApiError.class);
-
-            if (response.getStatusCode() == HttpStatus.SC_UNAUTHORIZED) {
-                throw new PluginNotSetupException("AccessKey and Secret not setup properly");
-            }
-
-            throw new ApiCallException(apiError);
+            onUnAuthorized(response);
         }
 
         return JSON.parse(response.getJsonBody(), DeliveryOrder.class);
@@ -214,13 +196,7 @@ public class ApiClientImpl implements ApiClient {
         BaseApiResponse response = makeCall(qs, HttpAgent.HTTPMethod.PUT, "/api/v1/orders/" + request.getOrderCode());
 
         if (!response.isOk()) {
-            ApiError apiError = JSON.parse(response.getJsonBody(), ApiError.class);
-
-            if (response.getStatusCode() == HttpStatus.SC_UNAUTHORIZED) {
-                throw new PluginNotSetupException("AccessKey and Secret not setup properly");
-            }
-
-            throw new ApiCallException(apiError);
+            onUnAuthorized(response);
         }
 
         return JSON.parse(response.getJsonBody(), DeliveryOrder.class);
@@ -235,13 +211,7 @@ public class ApiClientImpl implements ApiClient {
         BaseApiResponse response = makeCall(new Object(), HttpAgent.HTTPMethod.PUT, "/api/v1/orders/" + orderCode);
 
         if (!response.isOk()) {
-            ApiError apiError = JSON.parse(response.getJsonBody(), ApiError.class);
-
-            if (response.getStatusCode() == HttpStatus.SC_UNAUTHORIZED) {
-                throw new PluginNotSetupException("AccessKey and Secret not setup properly");
-            }
-
-            throw new ApiCallException(apiError);
+            onUnAuthorized(response);
         }
 
         return JSON.parse(response.getJsonBody(), DeliveryOrder.class);
@@ -269,13 +239,7 @@ public class ApiClientImpl implements ApiClient {
         BaseApiResponse response = makeCall(qs, HttpAgent.HTTPMethod.GET, "/api/v1/orders");
 
         if (!response.isOk()) {
-            ApiError apiError = JSON.parse(response.getJsonBody(), ApiError.class);
-
-            if (response.getStatusCode() == HttpStatus.SC_UNAUTHORIZED) {
-                throw new PluginNotSetupException("AccessKey and Secret not setup properly");
-            }
-
-            throw new ApiCallException(apiError);
+            onUnAuthorized(response);
         }
 
         DeliveryHistory history = JSON.parse(response.getJsonBody(), DeliveryHistory.class);
@@ -286,6 +250,7 @@ public class ApiClientImpl implements ApiClient {
         return history.getDeliveries();
     }
 
+    @SuppressWarnings("unchecked")
     private BaseApiResponse makeCall(Object body, HttpAgent.HTTPMethod method, String uri) throws IOException {
         Map paramMap = JSON.convert(body, Map.class);
         SortedMap<String, String> sortedParamMap = new TreeMap<String, String>(paramMap);
@@ -299,5 +264,15 @@ public class ApiClientImpl implements ApiClient {
         }
 
         return HttpAgent.request(method, host + uri, canonicalQS, authorizationHeader);
+    }
+
+    private void onUnAuthorized(BaseApiResponse response) throws PluginNotSetupException, ApiCallException {
+        ApiError apiError = JSON.parse(response.getJsonBody(), ApiError.class);
+
+        if (response.getStatusCode() == HttpStatus.SC_UNAUTHORIZED) {
+            throw new PluginNotSetupException("AccessKey and Secret not setup properly");
+        }
+
+        throw new ApiCallException(apiError);
     }
 }

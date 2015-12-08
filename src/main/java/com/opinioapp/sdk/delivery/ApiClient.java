@@ -24,9 +24,9 @@ public interface ApiClient {
 
     RegisteredMerchant registerMerchant(MerchantRegistrationRequest request) throws PluginNotSetupException, MerchantAlreadyRegisteredException, IOException, ApiCallException;
 
-    Serviceability checkServiceability(int merchantId) throws PluginNotSetupException, IOException, ApiCallException;
+    Serviceability checkServiceability(String merchantId) throws PluginNotSetupException, IOException, ApiCallException;
 
-    SupportedLocalities getSupportedLocalities(int merchantId) throws PluginNotSetupException, IOException, ApiCallException;
+    SupportedLocalities getSupportedLocalities(String merchantId) throws PluginNotSetupException, IOException, ApiCallException;
 
     DeliveryOrder requestDelivery(DeliveryRequest request) throws PluginNotSetupException, IOException, ApiCallException, NoPilotAvailableException;
 

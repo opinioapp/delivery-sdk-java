@@ -4,7 +4,7 @@ package com.opinioapp.sdk.delivery.reponses;
  * Created by lokesh on 5/11/15.
  */
 public class RegisteredMerchant {
-    private int id;
+    private String id;
     private String name;
     private String email;
     private String phone;
@@ -13,11 +13,11 @@ public class RegisteredMerchant {
     public RegisteredMerchant() {
     }
 
-    public int getId() {
+    public String getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(String id) {
         this.id = id;
     }
 
@@ -56,7 +56,7 @@ public class RegisteredMerchant {
     @Override
     public String toString() {
         return "RegisteredMerchant{" +
-                "id=" + id +
+                "id='" + id + '\'' +
                 ", name='" + name + '\'' +
                 ", email='" + email + '\'' +
                 ", phone='" + phone + '\'' +

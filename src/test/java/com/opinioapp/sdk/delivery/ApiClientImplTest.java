@@ -21,24 +21,25 @@ public class ApiClientImplTest {
 
     private ApiClient apiClient;
 
-    private static int merchantId = 9;
+    private static String merchantId = "9";
     private static String orderCode;
 
     @Before
     public void setUp() throws Exception {
         apiClient = new ApiClientImpl();
-        apiClient.init(EnvironmentEnum.LOCALHOST, new Credentials("12345678", "1234567890"));
+        apiClient.init(EnvironmentEnum.LOCALHOST, new Credentials("qwertyuiop", "poiuytrewqasdfghjkl"));
     }
 
     @Test
     public void testRegisterMerchant() throws Exception {
         MerchantRegistrationRequest registrationRequest = new MerchantRegistrationRequest();
         registrationRequest.setName("test merchant");
-        registrationRequest.setAddress("penthouse, bommanahalli");
-        registrationRequest.setEmail("lokeshj@outlook.com");
+        registrationRequest.setAddress("#123, apartment, x street");
+        registrationRequest.setEmail("username@email.com");
         registrationRequest.setLatitude(12.500);
         registrationRequest.setLongitude(71.99);
-        registrationRequest.setPhone("9916989452");
+        registrationRequest.setPhone("8888877777");
+        registrationRequest.setAppMerchantId("op-100");
 
         RegisteredMerchant response = apiClient.registerMerchant(registrationRequest);
         System.out.println(response);
