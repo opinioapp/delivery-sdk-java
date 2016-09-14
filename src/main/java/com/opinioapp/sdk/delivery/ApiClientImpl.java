@@ -34,26 +34,36 @@ public class ApiClientImpl implements ApiClient {
     private Credentials credentials;
 
     private Validator validator;
+    private String authorizationHeader;
 
     public void init(EnvironmentEnum environment, Credentials credentials) throws KeysNotFoundException {
-        if (environment == null) {
-            throw new IllegalArgumentException("environment cannot be null");
-        }
-
         if (credentials == null ||
                 TextUtils.isEmpty(credentials.getAccessKeyId()) ||
                 TextUtils.isEmpty(credentials.getSecretKey())) {
             throw new KeysNotFoundException();
         }
+        this.credentials = credentials;
+        this.init(environment);
+    }
 
-
+    public void init(EnvironmentEnum environment){
+        if (environment == null) {
+            throw new IllegalArgumentException("environment cannot be null");
+        }
         ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
         validator = factory.getValidator();
 
-        this.credentials = credentials;
         this.host = environment.getValue();
         this.hostHeader = this.host.substring(this.host.indexOf("://") + 3);
         this.isInitialized = true;
+    }
+
+    public String getAuthorizationHeader() {
+        return authorizationHeader;
+    }
+
+    public void setAuthorizationHeader(String authorizationHeader) {
+        this.authorizationHeader = authorizationHeader;
     }
 
     @Override
@@ -255,12 +265,12 @@ public class ApiClientImpl implements ApiClient {
         Map paramMap = JSON.convert(body, Map.class);
         SortedMap<String, String> sortedParamMap = new TreeMap<String, String>(paramMap);
         String canonicalQS = Signer.canonicalize(sortedParamMap);
-
-        String authorizationHeader = null;
-        try {
-            authorizationHeader = Signer.getSignedHeader(method, hostHeader, uri, credentials, canonicalQS);
-        } catch (SignatureException e) {
-            e.printStackTrace();
+        if(TextUtils.isEmpty(authorizationHeader)) {                                                                     // client did not generate authorizationHeader
+            try {                                                                                                       // credentials must have been provided
+                authorizationHeader = Signer.getSignedHeader(method, hostHeader, uri, credentials, canonicalQS);
+            } catch (SignatureException e) {
+                e.printStackTrace();
+            }
         }
 
         return HttpAgent.request(method, host + uri, canonicalQS, authorizationHeader);

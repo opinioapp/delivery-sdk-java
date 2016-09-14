@@ -24,6 +24,9 @@ public class MerchantRegistrationRequest {
     @Min(0)
     private double longitude;
 
+    @JsonProperty("callback_url")
+    private String callbackUrl;
+
     @JsonProperty("app_merchant_id")
     private String appMerchantId;
 
@@ -94,5 +97,13 @@ public class MerchantRegistrationRequest {
                 ", longitude=" + longitude +
                 ", appMerchantId='" + appMerchantId + '\'' +
                 '}';
+    }
+
+    public String getCallbackUrl() {
+        return callbackUrl;
+    }
+
+    public void setCallbackUrl(String callbackUrl) {
+        this.callbackUrl = callbackUrl;
     }
 }
