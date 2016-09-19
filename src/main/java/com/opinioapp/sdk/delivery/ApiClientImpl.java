@@ -88,6 +88,30 @@ public class ApiClientImpl implements ApiClient {
     }
 
     @Override
+    public RegisteredMerchant getMerchantStatus(String merchantId) throws PluginNotSetupException, MerchantAlreadyRegisteredException, IOException, ApiCallException {
+        if (!isInitialized) {
+            throw new PluginNotSetupException();
+        }
+
+        if (TextUtils.isEmpty(merchantId)) {
+            throw new IllegalArgumentException("Merchant id cannot be empty");
+        }
+
+        BaseApiResponse response = makeCall(new Object(), HttpAgent.HTTPMethod.GET, "/api/v1/merchants/" + merchantId);
+
+        if (!response.isOk()) {
+            ApiError apiError = JSON.parse(response.getJsonBody(), ApiError.class);
+
+            if (response.getStatusCode() == HttpStatus.SC_UNAUTHORIZED) {
+                throw new PluginNotSetupException("AccessKey and Secret not setup properly");
+            }
+            throw new ApiCallException(apiError);
+        }
+
+        return JSON.parse(response.getJsonBody(), RegisteredMerchant.class);
+    }
+
+    @Override
     public Serviceability checkServiceability(String merchantId) throws PluginNotSetupException, IOException, ApiCallException {
         if (!isInitialized) {
             throw new PluginNotSetupException();
