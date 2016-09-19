@@ -49,6 +49,14 @@ public class ApiClientImplTest {
     }
 
     @Test
+    public void testGetMerchantStatus() throws Exception {
+        RegisteredMerchant merchant = apiClient.getMerchantStatus(merchantId);
+        System.out.println(merchant);
+        Assert.assertNotNull(merchant);
+        Assert.assertEquals(merchantId, merchant.getId());
+    }
+
+    @Test
     public void testCheckServiceability() throws Exception {
         Serviceability serviceability = apiClient.checkServiceability(merchantId);
         System.out.println(serviceability);

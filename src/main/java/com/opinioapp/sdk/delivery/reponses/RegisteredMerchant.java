@@ -1,5 +1,7 @@
 package com.opinioapp.sdk.delivery.reponses;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 /**
  * Created by lokesh on 5/11/15.
  */
@@ -9,6 +11,8 @@ public class RegisteredMerchant {
     private String email;
     private String phone;
     private String address;
+    @JsonProperty("is_approved")
+    private int isApproved;
 
     public RegisteredMerchant() {
     }
@@ -62,5 +66,13 @@ public class RegisteredMerchant {
                 ", phone='" + phone + '\'' +
                 ", address='" + address + '\'' +
                 '}';
+    }
+
+    public int getIsApproved() {
+        return isApproved;
+    }
+
+    public void setIsApproved(int isApproved) {
+        this.isApproved = isApproved;
     }
 }
